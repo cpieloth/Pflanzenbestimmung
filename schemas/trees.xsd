@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!-- elements -->
+<xs:element name="bezeichnung" type="xs:string"/>
+<xs:element name="gruppe" type="xs:string"/>
+
+<xs:element name="baum">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element ref="bezeichnung"/>
+      <xs:element ref="gruppe"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+<xs:element name="baeume">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element ref="baum" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema>
