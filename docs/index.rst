@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to Pflanzenbestimmung's documentation!
-=====================================
+==============================================
 
 A template project for Python.
 
@@ -14,11 +14,4 @@ A template project for Python.
 
    getting_started_for_developers
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+`Bäume <dataToHtml/trees.html>`_
