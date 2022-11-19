@@ -5,7 +5,7 @@ This project uses *tox* as a central build management tool.
 Install tox and show all available commands (environments):
 
 ```bash
-$ pip3 install -r requirements.txt
+$ pip3 install -r requirements-tox.txt
 $ tox -a -v
 ```
 

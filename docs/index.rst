@@ -3,15 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Pflanzenbestimmung's documentation!
-==============================================
+Pflanzenbestimmung
+==================
 
-A template project for Python.
+Bäume
+-----
+
+- `Laubbäume <dataToHtml/Laubbaeume.html>`_
+- `Nadelbäumebäume <dataToHtml/Nadelbaeume.html>`_
+
+Sonstiges
+---------
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
 
    getting_started_for_developers
-
-`Bäume <dataToHtml/trees.html>`_
