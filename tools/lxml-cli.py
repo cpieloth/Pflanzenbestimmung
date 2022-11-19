@@ -2,6 +2,7 @@ import abc
 import argparse
 import os
 import sys
+import traceback
 
 import lxml.etree as ET
 
@@ -67,6 +68,29 @@ class SubCommand(abc.ABC):
         raise NotImplementedError()
 
 
+class ParseCmd(SubCommand):
+    """Parse a XML to check if it is wellformed."""
+
+    @classmethod
+    def _name(cls):
+        return 'parse'
+
+    @classmethod
+    def _add_arguments(cls, parser):
+        parser.add_argument('files', nargs='+', help='XML to transform.')
+        return parser
+
+    @classmethod
+    def execute(cls, args):
+        try:
+            for file in args.files:
+                ET.parse(os.path.abspath(file))
+            return 0
+        except Exception:
+            traceback.print_exc()
+            return 1
+
+
 class TransformCmd(SubCommand):
     """Transform a XML using a XSL/XSLT."""
 
@@ -76,23 +100,56 @@ class TransformCmd(SubCommand):
 
     @classmethod
     def _add_arguments(cls, parser):
-        parser.add_argument('--xml', help='XML to transform.')
-        parser.add_argument('--xsl', help='XSL/XSLT use to transform.')
-        parser.add_argument('--out', help='Output file path.')
+        parser.add_argument('--xml', required=True, help='XML to transform.')
+        parser.add_argument('--xsl', required=True, help='XSL/XSLT use to transform.')
+        parser.add_argument('--out', required=True, help='Output file path.')
         return parser
 
     @classmethod
     def execute(cls, args):
-        dom = ET.parse(os.path.abspath(args.xml))
-        xslt = ET.parse(os.path.abspath(args.xsl))
+        try:
+            dom = ET.parse(os.path.abspath(args.xml))
+            xslt = ET.parse(os.path.abspath(args.xsl))
 
-        transform = ET.XSLT(xslt)
-        newdom = transform(dom)
+            transform = ET.XSLT(xslt)
+            newdom = transform(dom)
 
-        with open(os.path.abspath(args.out), mode='wb') as file:
-            file.write(ET.tostring(newdom, pretty_print=True))
+            with open(os.path.abspath(args.out), mode='wb') as file:
+                file.write(ET.tostring(newdom, pretty_print=True))
+            
+            return 0
+        except Exception:
+            traceback.print_exc()
+            return 1
 
-        return 0
+
+class ValidateCmd(SubCommand):
+    """Validate XML files against a XSD schema."""
+
+    @classmethod
+    def _name(cls):
+        return 'validate'
+
+    @classmethod
+    def _add_arguments(cls, parser):
+        parser.add_argument('files', nargs='+', help='XML to transform.')
+        parser.add_argument('--xsd', required=True, help='XSD to use for validation.')
+        return parser
+
+    @classmethod
+    def execute(cls, args):
+        try:
+            xsd_file = ET.parse(os.path.abspath(args.xsd))
+            xsd = ET.XMLSchema(xsd_file)
+
+            for xml_file in args.files:
+                xml = ET.parse(os.path.abspath(xml_file))
+                xsd.assertValid(xml)
+            
+            return 0
+        except Exception:
+            traceback.print_exc()
+            return 1
 
 
 def main(argv=None):
@@ -103,7 +160,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog=argv[0])
 
     subparser = parser.add_subparsers(title='CLI wrapper for lxml,', description='Valid commands.')
+    ParseCmd.init_subparser(subparser)
     TransformCmd.init_subparser(subparser)
+    ValidateCmd.init_subparser(subparser)
 
     args = parser.parse_args(argv[1:])
     try:
